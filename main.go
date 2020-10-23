@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/mj9527/points_mall"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
-	"mj_logic_svr/points_mall"
+
 	"net"
 )
 
@@ -14,17 +15,18 @@ import (
 type server struct {
 }
 
-func (s *server) SayHello(ctx context.Context, req *points_mall.HelloRequest) (rsp *points_mall.HelloReply, err error) {
-	rsp = &points_mall.HelloReply{}
-	rsp.Message = "mj_logic" + req.Name
+func (s *server) PayCoin(ctx context.Context, req *points_mall.PayCoinReq) (rsp *points_mall.PayCoinRsp, err error) {
+	fmt.Println("recv req", req)
+
+	rsp = &points_mall.PayCoinRsp{}
+	rsp.Result = 1
+	rsp.Msg ="hello grpc"
 	err = nil
-	fmt.Println("recv request ", req, rsp)
+
+	fmt.Println("rsp", rsp)
 	return
 }
 
-func (s *server) SayHelloAgain(ctx context.Context, req *points_mall.HelloRequest) (rsp *points_mall.HelloReply, err error) {
-	return
-}
 
 func main() {
 	lis, err := net.Listen("tcp", ":8028") //监听所有网卡8028端口的TCP连接
@@ -38,7 +40,8 @@ func main() {
 	 * (proto编译时会为每个service生成Register***Server方法)
 	 * 包.注册服务方法(gRpc服务实例，包含接口方法的结构体[指针])
 	 */
-	points_mall.RegisterGreeterServer(s, &server{})
+
+	 points_mall.RegisterPointMallServer(s, &server{})
 	/**如果有可以注册多个接口服务,结构体要实现对应的接口方法
 	 * user.RegisterLoginServer(s, &server{})
 	 * minMovie.RegisterFbiServer(s, &server{})
